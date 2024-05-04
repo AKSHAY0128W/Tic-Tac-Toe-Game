@@ -148,20 +148,26 @@
 
 
       // Add event listener to each box for click event
+      // Add event listener to each box for click event
       boxes.forEach((box) => {
          box.addEventListener("click", () => {
             if (turnO) {
                box.innerText = "O";
-               turnO = false;
-            }
-            else {
+            } else {
                box.innerText = "X";
-               turnO = true;
-               count++;
-               if (!checkWinner() && count === 9) {
-                  showDraw();
-               }
             }
+
+            count++;
+            if (checkWinner()) {
+               return;
+            }
+
+            if (count === 9) {
+               showDraw();
+               return;
+            }
+
+            turnO = !turnO;
          });
       });
 
