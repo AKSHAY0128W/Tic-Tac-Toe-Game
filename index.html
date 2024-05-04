@@ -6,6 +6,88 @@
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <title>Document</title>
    <link rel="stylesheet" href="/style.css">
+   <style>
+      * {
+         margin: 0;
+         padding: 0;
+         background-color: teal;
+         box-sizing: border-box;
+      }
+
+      body {
+         text-align: center;
+         background-color: teal;
+      }
+
+      .container {
+         height: 70vh;
+         display: flex;
+         justify-content: center;
+         align-items: center;
+
+      }
+
+      .game {
+         height: 60vmin;
+         width: 60vmin;
+         display: flex;
+         flex-wrap: wrap;
+         justify-content: center;
+         align-items: center;
+         gap: 1.5vmin;
+      }
+
+      .box {
+         background-color: #f4f4f4;
+         border-radius: 1rem;
+         border: none;
+         box-shadow: 0 0 16px rgba(0, 0, 0, 0.3);
+         height: 18vmin;
+         width: 18vmin;
+         font-size: 8vmin;
+         color: #b0413e;
+      }
+
+      #resetBtn,
+      #newBtn {
+         margin-top: 2vmin;
+         padding: 1.5vmin 3vmin;
+         font-size: 2.4vmin;
+         background-color: #f4f4f4;
+         color: #b0413e;
+         border: none;
+         border-radius: 1rem;
+         cursor: pointer;
+      }
+
+      .msg {
+         color: #f4f4f4;
+         font-size: 5vmin;
+         margin-top: 2vmin;
+      }
+
+      .msg-container {
+         height: 100vmin;
+         display: flex;
+         flex-wrap: wrap;
+         justify-content: center;
+         align-items: center;
+         gap: 1.5vmin;
+         flex-direction: column;
+
+      }
+
+      h1 {
+         font-size: 5vmin;
+         color: #f4f4f4;
+         margin-bottom: 2vmin;
+         margin-top: 5vmin;
+      }
+
+      .hide {
+         display: none;
+      }
+   </style>
 </head>
 
 <body>
@@ -31,7 +113,115 @@
    </div>
 
    <button id="resetBtn">Reset</button>
-   <script src="/app.js"></script>
+   <script>
+      let boxes = document.querySelectorAll('.box');
+      let resetBtn = document.querySelector('#resetBtn');
+      let newGameBtn = document.querySelector('#newBtn');
+      let msgContainer = document.querySelector('.msg-container');
+      let msg = document.querySelector('.msg');
+      let container = document.querySelector('.container');
+
+      let turnO = true;
+      let count = 0;
+
+
+      // Reset the game
+      const resetGame = () => {
+         turnO = true;
+         count = 0;
+         enableBoxes();
+         msgContainer.classList.add("hide");
+      }
+
+
+      // Check for the winner pattern
+      const winPatterns = [
+         [0, 1, 2],
+         [0, 3, 6],
+         [0, 4, 8],
+         [1, 4, 7],
+         [2, 5, 8],
+         [2, 4, 6],
+         [3, 4, 5],
+         [6, 7, 8],
+      ];
+
+
+      // Add event listener to each box for click event
+      boxes.forEach((box) => {
+         box.addEventListener("click", () => {
+            if (turnO) {
+               box.innerText = "O";
+               turnO = false;
+            }
+            else {
+               box.innerText = "X";
+               turnO = true;
+               count++;
+               if (!checkWinner() && count === 9) {
+                  showDraw();
+               }
+            }
+         });
+      });
+
+
+
+      // Disable all boxes
+      const disableBoxes = () => {
+         for (let box of boxes) {
+            box.disabled = true;
+         }
+      }
+
+      // Enable all boxes
+      const enableBoxes = () => {
+         for (let box of boxes) {
+            box.disabled = false;
+            box.innerText = "";
+         }
+      }
+
+
+      // Show the draw message
+      const showDraw = () => {
+         msg.innerText = `Draw!`;
+         msgContainer.classList.remove('hide');
+         disableBoxes();
+      }
+
+
+      // Show the winner message
+      const showWinner = (winner) => {
+         msg.innerText = `Congratulation Winner is ${winner}`;
+         msgContainer.classList.remove('hide');
+         disableBoxes();
+      }
+
+
+      // Check for the winner
+      const checkWinner = () => {
+         for (let pattern of winPatterns) {
+            let pos1Val = boxes[pattern[0]].innerText;
+            let pos2Val = boxes[pattern[1]].innerText;
+            let pos3Val = boxes[pattern[2]].innerText;
+
+            if (pos1Val != "" && pos2Val != "" && pos3Val != "") {
+               if (pos1Val === pos2Val && pos2Val === pos3Val) {
+                  showWinner(pos1Val);
+                  return true;
+               }
+            }
+         }
+         return false;
+      };
+
+
+      // Add event listener to the new game button and reset button
+      newGameBtn.addEventListener("click", resetGame)
+      resetBtn.addEventListener("click", resetGame)
+
+   </script>
 </body>
 
 </html>
